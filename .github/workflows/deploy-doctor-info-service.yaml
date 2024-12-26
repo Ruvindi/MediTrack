@@ -56,3 +56,14 @@ jobs:
         run: |
           kubectl cluster-info
           kubectl get nodes
+
+      - name: Deploy to EKS
+        env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        run: |
+          cd doctor-info-service/k8s # Change directory
+          sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_REPOSITORY/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" deployment.yaml && \
+          kubectl apply -f deployment.yaml --validate=false
+          sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_REPOSITORY/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" service.yaml && \
+          kubectl apply -f service.yaml --validate=false      

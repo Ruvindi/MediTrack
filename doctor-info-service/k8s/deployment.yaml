@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: doctor-info-deployment
+  labels:
+    app: doctor-info
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: doctor-info
+  template:
+    metadata:
+      labels:
+        app: doctor-info
+    spec:
+      containers:
+      - name: doctor-info-service
+        image: us-central1-docker.pkg.dev/healthsync-445
