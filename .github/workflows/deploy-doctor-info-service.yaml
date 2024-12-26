@@ -1,0 +1,58 @@
+name: Deploy Doctor Info Service
+
+on:
+  push:
+    branches:
+      - main # Or your deployment branch (e.g., release)
+    paths: # Trigger only if doctor-info-service files are changed
+      - 'doctor-info-service/**'
+      - '.github/workflows/deploy-doctor-info-service.yml'
+  workflow_dispatch: # Allows manual triggering
+
+env:
+  ECR_REPOSITORY: healthsync-repo # Replace with your actual repo name
+  EKS_CLUSTER_NAME: healthsync-cluster # Replace with your EKS cluster name
+  AWS_REGION: us-east-1
+  SERVICE_NAME: doctor-info-service # Used for resource names in Kubernetes manifests
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set short git commit SHA
+        id: commit
+        uses: prompt/actions-commit-hash@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2 # Use v2 for better security
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        run: |
+          docker build -f doctor-info-service/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY/${{ env.SERVICE_NAME }}:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY/${{ env.SERVICE_NAME }}:$IMAGE_TAG
+
+      - name: Set up kubectl for EKS
+        run: |
+          curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.31.2/2024-11-15/bin/linux/amd64/kubectl # Update EKS Version if needed
+          chmod +x ./kubectl
+          mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+      - name: Verify kubectl connection
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
