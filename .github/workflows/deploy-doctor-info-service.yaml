@@ -6,7 +6,7 @@ on:
       - main # Or your deployment branch (e.g., release)
     paths: # Trigger only if doctor-info-service files are changed
       - 'doctor-info-service/**'
-      - '.github/workflows/deploy-doctor-info-service.yml'
+      - '.github/workflows/deploy-doctor-info-service.yaml'
   workflow_dispatch: # Allows manual triggering
 
 env:
