@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: patient-record-service
+  namespace: meditrack
   labels:
     app: patient-record
 spec:

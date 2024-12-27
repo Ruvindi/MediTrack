@@ -1,0 +1,73 @@
+name: Deploy Doctor Info Service
+
+on:
+  push:
+    tags: # Trigger only on tags
+      - 'v*'
+      
+    paths: # Trigger only if doctor-info-service files are changed
+      - 'patient-record-service/**'
+      - '.github/workflows/deploy-patient-record-service-service.yaml'
+  workflow_dispatch: # Allows manual triggering
+
+env:
+  ECR_NAMESPACE: meditrack_ecr # Replace with your actual repo name
+  EKS_CLUSTER_NAME: meditrack-cluster # Replace with your EKS cluster name
+  AWS_REGION: us-east-1
+  SERVICE_NAME: patient-record-service # Used for resource names in Kubernetes manifests
+
+jobs:
+  deploy:
+    if: startsWith(github.ref, 'refs/tags/') #Ensure this only run on tag pushes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3 #checkout the repository code
+        with:
+          fetch-depth: 0
+
+      - name: Set short git commit SHA
+        id: commit
+        uses: prompt/actions-commit-hash@v2 # get the short commit hash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2 # Use v2 for better security
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1 # login to aws elastic container registry
+
+      - name: Check and Create ECR Repository (if needed)
+        run: |
+          REPO_NAME="${{ env.ECR_NAMESPACE }}/${{ env.SERVICE_NAME }}" # Combine the env variables
+          aws ecr describe-repositories --repository-names "$REPO_NAME" || aws ecr create-repository --repository-name "$REPO_NAME"
+      
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.ref_name }}
+        run: |
+          docker build -f doctor-info-service/Dockerfile -t $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG patient-record-service
+          docker push $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG 
+
+      - name: Set up kubectl for EKS
+        run: |
+          curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.31.2/2024-11-15/bin/linux/amd64/kubectl # Update EKS Version if needed
+          chmod +x ./kubectl
+          mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+
+      - name: Deploy to EKS
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.ref_name }}
+        run: |
+          cd doctor-info-service/k8s # Change directory
+          sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" deployment.yaml && \
+          kubectl apply -f deployment.yaml --validate=false
+          sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" service.yaml && \
+          kubectl apply -f service.yaml --validate=false      
