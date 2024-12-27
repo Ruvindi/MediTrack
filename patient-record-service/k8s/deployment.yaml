@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-record-deployment
+  labels:
+    app: patient-record
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-record
+  template:
+    metadata:
+      labels:
+        app: patient-record
+    spec:
+      containers:
+      - name: patient-record-service
+        image: us-central1-docker.pkg.dev/healthsync-445
