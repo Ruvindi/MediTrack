@@ -49,7 +49,7 @@ jobs:
       
       - name: Build, tag, and push image to Amazon ECR
         env:
-          ECR_NAMESPACE: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.ref_name }}
         run: |
           docker build -f doctor-info-service/Dockerfile -t $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG doctor-info-service
