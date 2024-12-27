@@ -3,7 +3,7 @@ name: Deploy appointment Service
 on:
   push:
     tags: # Trigger only on tags
-      - 'v*'
+      - 'v-as*'
 
     paths: # Trigger only if doctor-info-service files are changed
       - 'appointment-service/**'

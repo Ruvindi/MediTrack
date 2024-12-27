@@ -3,7 +3,7 @@ name: Deploy Doctor Info Service
 on:
   push:
     tags: # Trigger only on tags
-      - 'v*'
+      - 'v-dis*'
 ###
     paths: # Trigger only if doctor-info-service files are changed
       - 'doctor-info-service/**'

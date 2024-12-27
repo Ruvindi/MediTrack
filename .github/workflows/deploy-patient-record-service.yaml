@@ -3,11 +3,11 @@ name: Deploy patient record Service
 on:
   push:
     tags: # Trigger only on tags
-      - 'v*'
+      - 'v-prs*'
       
     paths: # Trigger only if doctor-info-service files are changed
       - 'patient-record-service/**'
-      - '.github/workflows/deploy-patient-record-service-service.yaml'
+      - '.github/workflows/deploy-patient-record-service.yaml'
   workflow_dispatch: # Allows manual triggering
 
 env:
