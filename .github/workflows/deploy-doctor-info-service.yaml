@@ -4,8 +4,7 @@ on:
   push:
     tags: # Trigger only on tags
       - 'v*'
-    #branches:
-    #  - main # Or your deployment branch (e.g., release)
+###
     paths: # Trigger only if doctor-info-service files are changed
       - 'doctor-info-service/**'
       - '.github/workflows/deploy-doctor-info-service.yaml'

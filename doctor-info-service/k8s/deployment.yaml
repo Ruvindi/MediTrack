@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: doctor-info-deployment
+  namespace: meditrack
   labels:
     app: doctor-info
 spec:
@@ -16,4 +17,4 @@ spec:
     spec:
       containers:
       - name: doctor-info-service
-        image: us-central1-docker.pkg.dev/healthsync-445
+        image: us-central1-docker.pkg.dev/meditrack-445
