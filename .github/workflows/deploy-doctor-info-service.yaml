@@ -44,7 +44,7 @@ jobs:
 
       - name: Check and Create ECR Repository (if needed)
         run: |
-          REPO_NAME="${{ env.ECR_REPOSITORY }}/${{ env.SERVICE_NAME }}" # Combine the env variables
+          REPO_NAME="${{ env.ECR_NAMESPACE }}/${{ env.SERVICE_NAME }}" # Combine the env variables
           aws ecr describe-repositories --repository-names "$REPO_NAME" || aws ecr create-repository --repository-name "$REPO_NAME"
       
       - name: Build, tag, and push image to Amazon ECR
