@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: doctor-info-service
-        image: us-central1-docker.pkg.dev/meditrack-446
+        image: us-central1-docker.pkg.dev/meditrack-447
