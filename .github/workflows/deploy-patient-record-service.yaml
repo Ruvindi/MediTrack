@@ -1,4 +1,4 @@
-name: Deploy Doctor Info Service
+name: Deploy patient record Service
 
 on:
   push:

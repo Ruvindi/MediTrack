@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-srv-deployment
+  namespace: meditrack
+  labels:
+    app: doctor-info
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointment
+  template:
+    metadata:
+      labels:
+        app: appointment
+    spec:
+      containers:
+      - name: appointment-service
+        image: us-central1-docker.pkg.dev/healthsync-445
