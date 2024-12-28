@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    compatibility-verifier:
+      enabled: false
+  application:
+    name: aggregator-service
+  datasource:
+    url: jdbc:redshift://meditrack-redshift.cpcxruvl5hto.us-east-1.redshift.amazonaws.com:5439/dev
+    username: awsuser
+    password: FWVwgeyc000((
+    driver-class-name: com.amazon.redshift.jdbc.Driver
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: meditrack
+      uri: mongodb+srv://meditrackUser:meditrack@meditrackruvindicluster.c7vrl.mongodb.net/?retryWrites=true&w=majority&appName=MediTrackRuvindiCluster
+
+server:
+  port: 8081
