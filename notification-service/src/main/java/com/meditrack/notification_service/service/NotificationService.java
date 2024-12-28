@@ -1,55 +1,70 @@
 package com.meditrack.notification_service.service;
 
-import org.springframework.beans.factory.annotation.Value;
+
+import com.meditrack.notification_service.model.Notification;
+import com.meditrack.notification_service.repository.NotificationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.model.*;
 
+import java.util.List;
+
 @Service
 public class NotificationService {
 
-    @Value("${aws.ses.accessKey}")
-    private String accessKey;
+    @Autowired
+    private NotificationRepository repository;
 
-    @Value("${aws.ses.secretKey}")
-    private String secretKey;
+    private final SesClient sesClient;
 
-    @Value("${aws.ses.region}")
-    private String region;
-
-    @Value("${aws.ses.fromEmail}")
-    private String fromEmail;
-
-    public void sendReminder(String to, String subject, String messageBody) {
-        SesClient sesClient = SesClient.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)))
+    public NotificationService() {
+        this.sesClient = SesClient.builder()
+                .region(Region.US_EAST_1) // Change to your SES region
+                .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
+    }
 
-        SendEmailRequest emailRequest = SendEmailRequest.builder()
-                .destination(Destination.builder()
-                        .toAddresses(to)
-                        .build())
-                .message(Message.builder()
-                        .subject(Content.builder()
-                                .data(subject)
-                                .charset("UTF-8")
-                                .build())
-                        .body(Body.builder()
-                                .text(Content.builder()
-                                        .data(messageBody)
-                                        .charset("UTF-8")
-                                        .build())
-                                .build())
-                        .build())
-                .source(fromEmail)
-                .build();
+    public List<Notification> getAllNotifications() {
+        return repository.findAll();
+    }
 
-        sesClient.sendEmail(emailRequest);
-        sesClient.close();
+    public Notification sendNotification(Notification notification) {
+        try {
+            if ("email".equalsIgnoreCase(notification.getType())) {
+                sendEmail(notification);
+            }
+            notification.setSent(true);
+        } catch (Exception e) {
+            notification.setSent(false);
+        }
+        return repository.save(notification);
+    }
+
+    private void sendEmail(Notification notification) {
+        try {
+            SendEmailRequest emailRequest = SendEmailRequest.builder()
+                    .destination(Destination.builder()
+                            .toAddresses(notification.getRecipient())
+                            .build())
+                    .message(Message.builder()
+                            .subject(Content.builder()
+                                    .data("Notification")
+                                    .build())
+                            .body(Body.builder()
+                                    .text(Content.builder()
+                                            .data(notification.getMessage())
+                                            .build())
+                                    .build())
+                            .build())
+                    .source("<YOUR_VERIFIED_EMAIL>") // Replace with a verified SES email
+                    .build();
+
+            sesClient.sendEmail(emailRequest);
+        } catch (SesException e) {
+            throw new RuntimeException("Failed to send email via SES: " + e.getMessage());
+        }
     }
 }

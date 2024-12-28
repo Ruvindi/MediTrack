@@ -1,20 +1,20 @@
-name: Deploy appointment Service
+name: Deploy notification Service
 
 on:
   push:
     tags: # Trigger only on tags
       - 'v-as*'
 
-    paths: # Trigger only if appointment-service files are changed
-      - 'appointment-service/**'
-      - '.github/workflows/deploy-appointment-service.yaml'
+    paths: # Trigger only if notification-service files are changed
+      - 'notification-service/**'
+      - '.github/workflows/deploy-notification-service.yaml'
   workflow_dispatch: # Allows manual triggering
 
 env:
   ECR_NAMESPACE: meditrack_ecr # Replace with your actual repo name
   EKS_CLUSTER_NAME: meditrack-cluster # Replace with your EKS cluster name
   AWS_REGION: us-east-1
-  SERVICE_NAME: appointment-service # Used for resource names in Kubernetes manifests
+  SERVICE_NAME: notification-service # Used for resource names in Kubernetes manifests
 
 jobs:
   deploy:
@@ -51,7 +51,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.ref_name }}
         run: |
-          docker build -f appointment-service/Dockerfile -t $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG appointment-service
+          docker build -f notification-service/Dockerfile -t $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG notification-service
           docker push $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG 
 
       - name: Set up kubectl for EKS
@@ -66,7 +66,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.ref_name }}
         run: |
-          cd appointment-service/k8s # Change directory
+          cd notification-service/k8s # Change directory
           sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" deployment.yaml && \
           kubectl apply -f deployment.yaml --validate=false
           sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" service.yaml && \

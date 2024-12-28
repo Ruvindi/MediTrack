@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: appointment-srv-deployment
+  name: aggregator-deployment
   namespace: meditrack
   labels:
-    app:appointment
+    app:aggregator
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: appointment
+      app: aggregator
   template:
     metadata:
       labels:
-        app: appointment
+        app:aggregator
     spec:
       containers:
-      - name: appointment-service
-        image: us-central1-docker.pkg.dev/healthsync-445
+      - name: aggregator-service
+        image: us-central1-docker.pkg.dev/meditrack-459
