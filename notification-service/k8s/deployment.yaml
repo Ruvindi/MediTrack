@@ -18,3 +18,10 @@ spec:
       containers:
       - name: notification-service
         image: us-central1-docker.pkg.dev/healthsync-445
+        resources:
+            requests:
+              cpu: 2m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 512Mi

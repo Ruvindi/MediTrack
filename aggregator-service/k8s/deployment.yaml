@@ -18,3 +18,10 @@ spec:
       containers:
       - name: aggregator-service
         image: us-central1-docker.pkg.dev/meditrack-456
+        resources:
+            requests:
+              cpu: 2m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 512Mi
