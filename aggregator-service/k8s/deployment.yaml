@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: aggregator-service
-        image: us-central1-docker.pkg.dev/meditrack-459
+        image: us-central1-docker.pkg.dev/meditrack-456
