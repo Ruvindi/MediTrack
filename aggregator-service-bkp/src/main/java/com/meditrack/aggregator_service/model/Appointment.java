@@ -1,8 +1,6 @@
 package com.meditrack.aggregator_service.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
 public class Appointment {
     private String id;
     private String pId;

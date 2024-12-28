@@ -1,8 +1,5 @@
 package com.meditrack.aggregator_service.model;
 
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document
 public class DoctorInfo {
     
     private String id;

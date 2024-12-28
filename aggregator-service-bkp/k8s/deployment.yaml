@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggregator-deployment
+  namespace: meditrack
+  labels:
+    app: aggregator
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: aggregator
+  template:
+    metadata:
+      labels:
+        app: aggregator
+    spec:
+      containers:
+      - name: aggregator-service
+        image: us-central1-docker.pkg.dev/meditrack-459

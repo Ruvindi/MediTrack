@@ -1,0 +1,103 @@
+Subject: [PATCH] TEST
+---
+Index: aggregator-service/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/aggregator-service/pom.xml b/aggregator-service/pom.xml
+--- a/aggregator-service/pom.xml	(revision 744a8e075f217baa0d9e56e243673dc84ac1d32a)
++++ b/aggregator-service/pom.xml	(revision 81969d496855c76c88b6f65b4b2cfa3008ec2fbc)
+@@ -75,10 +75,7 @@
+         	<groupId>com.fasterxml.jackson.core</groupId>
+         	<artifactId>jackson-databind</artifactId>
+     	</dependency>
+-    	<dependency>
+-        	<groupId>org.springframework.boot</groupId>
+-        	<artifactId>spring-boot-starter-jdbc</artifactId>
+-    	</dependency>
++
+     	<dependency>
+         	<groupId>software.amazon.awssdk</groupId>
+         	<artifactId>redshift</artifactId>
+Index: aggregator-service/src/main/java/com/meditrack/aggregator_service/model/Appointment.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/Appointment.java b/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/Appointment.java
+--- a/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/Appointment.java	(revision 744a8e075f217baa0d9e56e243673dc84ac1d32a)
++++ b/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/Appointment.java	(revision 81969d496855c76c88b6f65b4b2cfa3008ec2fbc)
+@@ -1,6 +1,8 @@
+ package com.meditrack.aggregator_service.model;
+ 
++import org.springframework.data.mongodb.core.mapping.Document;
+ 
++@Document
+ public class Appointment {
+     private String id;
+     private String pId;
+Index: aggregator-service/src/main/java/com/meditrack/aggregator_service/model/DoctorInfo.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/DoctorInfo.java b/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/DoctorInfo.java
+--- a/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/DoctorInfo.java	(revision 744a8e075f217baa0d9e56e243673dc84ac1d32a)
++++ b/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/DoctorInfo.java	(revision 81969d496855c76c88b6f65b4b2cfa3008ec2fbc)
+@@ -1,5 +1,8 @@
+ package com.meditrack.aggregator_service.model;
+ 
++import org.springframework.data.mongodb.core.mapping.Document;
++
++@Document
+ public class DoctorInfo {
+     
+     private String id;
+Index: aggregator-service/src/main/java/com/meditrack/aggregator_service/model/PatientRcord.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/PatientRcord.java b/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/PatientRcord.java
+--- a/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/PatientRcord.java	(revision 744a8e075f217baa0d9e56e243673dc84ac1d32a)
++++ b/aggregator-service/src/main/java/com/meditrack/aggregator_service/model/PatientRcord.java	(revision 81969d496855c76c88b6f65b4b2cfa3008ec2fbc)
+@@ -1,5 +1,8 @@
+ package com.meditrack.aggregator_service.model;
+ 
++import org.springframework.data.mongodb.core.mapping.Document;
++
++@Document
+ public class PatientRcord {
+     private String pid;
+     private String pname;
+Index: aggregator-service/src/main/resources/application.yaml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/aggregator-service/src/main/resources/application.yaml b/aggregator-service/src/main/resources/application.yaml
+new file mode 100644
+--- /dev/null	(revision 81969d496855c76c88b6f65b4b2cfa3008ec2fbc)
++++ b/aggregator-service/src/main/resources/application.yaml	(revision 81969d496855c76c88b6f65b4b2cfa3008ec2fbc)
+@@ -0,0 +1,20 @@
++spring:
++  cloud:
++    compatibility-verifier:
++      enabled: false
++  application:
++    name: aggregator-service
++  datasource:
++    url: jdbc:redshift://meditrack-redshift.cpcxruvl5hto.us-east-1.redshift.amazonaws.com:5439/dev
++    username: awsuser
++    password: FWVwgeyc000((
++    driver-class-name: com.amazon.redshift.jdbc.Driver
++  data:
++    mongodb:
++      host: localhost
++      port: 27017
++      database: meditrack
++      uri: mongodb+srv://meditrackUser:meditrack@meditrackruvindicluster.c7vrl.mongodb.net/?retryWrites=true&w=majority&appName=MediTrackRuvindiCluster
++
++server:
++  port: 8081

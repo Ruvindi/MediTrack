@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import software.amazon.awssdk.services.redshiftdata.model.*;
+//import software.amazon.awssdk.services.redshiftdata.model.*;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class AggregatorService {
 
     // Aggregation logic: Combine data from Patients, Doctors, and Appointments
     public void aggregateData() {
-        List<PatientRcord> patients = getPatients();
+        //List<PatientRcord> patients = getPatients();
         List<Appointment> appointments = getAppointments();
         List<DoctorInfo> doctors = getDoctors();
 
