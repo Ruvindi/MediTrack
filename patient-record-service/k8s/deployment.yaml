@@ -17,4 +17,4 @@ spec:
     spec:
       containers:
       - name: patient-record-service
-        image: us-central1-docker.pkg.dev/healthsync-445
+        image: us-central1-docker.pkg.dev/healthsync-446
