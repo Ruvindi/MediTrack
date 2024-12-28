@@ -6,7 +6,7 @@ metadata:
   labels:
     app: doctor-info
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: doctor-info
