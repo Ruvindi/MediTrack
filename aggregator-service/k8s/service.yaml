@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name:aggregator-service
   labels:
-    app:aggregator
+    app: aggregator
 spec:
   selector:
-    app:aggregator
+    app: aggregator
   ports:
     - protocol: TCP
       port: 80       # The port the service will expose

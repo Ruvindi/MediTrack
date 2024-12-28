@@ -3,7 +3,7 @@ name: Deploy notification Service
 on:
   push:
     tags: # Trigger only on tags
-      - 'v-as*'
+      - 'v-ns*'
 
     paths: # Trigger only if notification-service files are changed
       - 'notification-service/**'
@@ -70,4 +70,5 @@ jobs:
           sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" deployment.yaml && \
           kubectl apply -f deployment.yaml --validate=false
           sed -i.bak "s|image: .*$|image: $ECR_REGISTRY/$ECR_NAMESPACE/${{ env.SERVICE_NAME }}:$IMAGE_TAG|g" service.yaml && \
-          kubectl apply -f service.yaml --validate=false      
+          kubectl apply -f service.yaml --validate=false
+          kubectl apply -f hpa.yaml --validate=false   
