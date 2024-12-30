@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: aggregator-service
-        image: us-central1-docker.pkg.dev/meditrack-456
+        image: us-central1-docker.pkg.dev/meditrack-457
         resources:
             requests:
               cpu: 100m
