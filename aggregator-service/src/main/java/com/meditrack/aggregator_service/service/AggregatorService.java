@@ -1,6 +1,5 @@
 package com.meditrack.aggregator_service.service;
 
-
 import com.meditrack.aggregator_service.model.Appointment;
 import com.meditrack.aggregator_service.model.PatientRcord;
 import com.meditrack.aggregator_service.model.DoctorInfo;
@@ -41,14 +40,13 @@ public class AggregatorService {
         List<DoctorInfo> doctors = getDoctors();
 
         // Perform aggregation logic here (e.g., number of appointments per doctor)
-        // Example: Aggregating appointments count by doctor
         for (DoctorInfo doctor : doctors) {
             long appointmentCount = appointments.stream()
                 .filter(a -> a.getDoctorName().equals(doctor.getName()))
                 .count();
 
             // Insert the aggregated data into Redshift
-            String insertSQL = "INSERT INTO appointment_aggregation (doctor_name, appointment_count) VALUES (?, ?)";
+            String insertSQL = "INSERT INTO appointment_aggregation (doctor_name, appointment_count) VALUES ('%s', %d)";
             redshiftService.insertData(insertSQL, doctor.getName(), appointmentCount);
         }
     }

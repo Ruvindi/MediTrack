@@ -2,7 +2,7 @@ package com.meditrack.aggregator_service.model;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
+@Document(collection = "appointment")
 public class Appointment {
     private String id;
     private String pId;

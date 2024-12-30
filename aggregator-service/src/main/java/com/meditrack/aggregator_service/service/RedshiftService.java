@@ -18,34 +18,24 @@ public class RedshiftService {
     }
 
     // Method to insert data into Redshift
-    public void insertData(String sql, String doctorName, long appointmentCount) {
-        // Prepare parameters
-        SqlParameter doctorNameParam = SqlParameter.builder()
-                .name("doctor_name")  // Make sure your SQL query has this placeholder
-                .value(doctorName)
-                .build();
+    public void insertData(String sqlTemplate, String doctorName, long appointmentCount) {
+        // Safely format and escape parameters
+        String sql = String.format(sqlTemplate, doctorName.replace("'", "''"), appointmentCount);
 
-        SqlParameter appointmentCountParam = SqlParameter.builder()
-                .name("appointment_count")
-                .value(String.valueOf(appointmentCount))
-                .build();
+        System.out.println("Executing SQL: " + sql); // Log SQL for debugging
 
-        // Execute statement request
         ExecuteStatementRequest executeRequest = ExecuteStatementRequest.builder()
-                .clusterIdentifier("your-cluster-id")
-                .database("your-database")
-                .sql(sql)  // Make sure your SQL has placeholders for parameters
-                .parameters(List.of(doctorNameParam, appointmentCountParam))  // Pass parameters as a list
+                .clusterIdentifier("meditrack-redshift")  
+                .database("dev")  
+                .dbUser("awsuser")  
+                .sql(sql)
                 .build();
 
-        // Execute the statement
         ExecuteStatementResponse response = redshiftClient.executeStatement(executeRequest);
 
         // Check execution status
         if (response != null) {
-            // You can check the status of the statement execution using the statement ID
-            String statementId = response.id();
-            System.out.println("Statement executed with ID: " + statementId);
+            System.out.println("Statement executed with ID: " + response.id());
         } else {
             System.out.println("Failed to execute statement.");
         }
